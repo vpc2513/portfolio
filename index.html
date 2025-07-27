@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venkata Chikkam - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .project-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            background: #e8f4fd;
+            color: #2980b9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dbdb;
+            transform: translateY(-2px);
+        }
+
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-content h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-card {
+                padding: 20px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Venkata Chikkam</h1>
+            <p>Computer Science Portfolio</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading projects...</p>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+            <!-- Projects will be loaded here -->
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Venkata Chikkam. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h2>Enter Access Code</h2>
+            <p>Please enter the access code to view project details.</p>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Enter access code">
+            <button class="btn btn-primary" onclick="checkPassword()">Submit</button>
+            <div class="error-message" id="errorMessage">Incorrect access code. Please try again.</div>
+        </div>
+    </div>
+
+    <script>
+        // Project data
+        const projects = [
+            {
+                title: "Machine Learning - Stock Analysis & Prediction",
+                description: "A comprehensive machine learning project for stock market analysis and prediction using multiple algorithms including Decision Trees, Random Forest, and Linear Regression. Features real-time data retrieval via Alpaca API, technical indicator calculation, news sentiment analysis, and automated visualization.",
+                tech: ["Python", "Machine Learning", "Alpaca API", "Pandas", "Scikit-learn", "Matplotlib"],
+                type: "ml",
+                hasCode: true
+            },
+            {
+                title: "Search Algorithms Implementation",
+                description: "Implementation of various search algorithms including A*, BFS, DFS, and UCS for pathfinding problems. Features a Pac-Man game environment with multiple maze layouts and sophisticated ghost agents.",
+                tech: ["Python", "Search Algorithms", "A*", "BFS", "DFS", "Game AI"],
+                type: "search",
+                hasCode: true
+            },
+            {
+                title: "Multi-Agent Systems",
+                description: "Advanced multi-agent system implementation featuring intelligent ghost agents, evaluation functions, and sophisticated game strategies. Includes contest-level agent implementations with optimized performance.",
+                tech: ["Python", "Multi-Agent Systems", "Game Theory", "AI", "Optimization"],
+                type: "multiagent",
+                hasCode: true
+            },
+            {
+                title: "Operating Systems Projects",
+                description: "Implementation of core operating system concepts including process management, file systems, and system programming. Features dining philosophers problem solution and comprehensive system utilities.",
+                tech: ["C++", "Operating Systems", "Process Management", "File Systems", "System Programming"],
+                type: "os",
+                hasCode: true
+            },
+            {
+                title: "Tracking & Bayesian Networks",
+                description: "Implementation of Bayesian networks, particle filtering, and probabilistic tracking systems. Features exact inference algorithms and sophisticated observation probability calculations.",
+                tech: ["Python", "Bayesian Networks", "Particle Filtering", "Probabilistic AI", "Inference"],
+                type: "tracking",
+                hasCode: true
+            },
+            {
+                title: "Senior Project - EDRish",
+                description: "A comprehensive senior capstone project focusing on data analysis and visualization. Includes detailed research, analysis tools, and presentation materials demonstrating advanced technical skills.",
+                tech: ["Data Analysis", "Research", "Visualization", "Technical Writing"],
+                type: "senior",
+                hasCode: false
+            }
+        ];
+
+        // Access codes (you can modify these)
+        const accessCodes = {
+            "ml": "ml2024",
+            "search": "search2024", 
+            "multiagent": "agent2024",
+            "os": "os2024",
+            "tracking": "track2024",
+            "senior": "senior2024"
+        };
+
+        let currentProject = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjects();
+        });
+
+        function loadProjects() {
+            const grid = document.getElementById('projectsGrid');
+            
+            projects.forEach(project => {
+                const card = createProjectCard(project);
+                grid.appendChild(card);
+            });
+        }
+
+        function createProjectCard(project) {
+            const card = document.createElement('div');
+            card.className = 'project-card';
+            
+            card.innerHTML = `
+                <div class="project-title">${project.title}</div>
+                <div class="project-description">${project.description}</div>
+                <div class="project-tech">
+                    ${project.tech.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                </div>
+                <div class="project-links">
+                    ${project.hasCode ? 
+                        `<button class="btn btn-primary" onclick="requestAccess('${project.type}')">View Code</button>` : 
+                        `<span class="btn btn-secondary" style="cursor: default;">No Code Available</span>`
+                    }
+                    <button class="btn btn-secondary" onclick="viewProject('${project.type}')">Learn More</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function requestAccess(projectType) {
+            currentProject = projectType;
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const correctPassword = accessCodes[currentProject];
+            
+            if (password === correctPassword) {
+                document.getElementById('passwordModal').style.display = 'none';
+                // Here you would typically redirect to the actual code repository
+                // For now, we'll show an alert
+                alert(`Access granted! You can now view the code for ${projects.find(p => p.type === currentProject).title}`);
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function viewProject(projectType) {
+            const project = projects.find(p => p.type === projectType);
+            let details = `Project: ${project.title}\n\n`;
+            details += `Description: ${project.description}\n\n`;
+            details += `Technologies: ${project.tech.join(', ')}\n\n`;
+            
+            if (projectType === 'ml') {
+                details += `Key Features:\n`;
+                details += `• Real-time stock data via Alpaca API\n`;
+                details += `• Multiple ML models (Decision Trees, Random Forest, Linear Regression)\n`;
+                details += `• Technical indicator calculation\n`;
+                details += `• News sentiment analysis\n`;
+                details += `• Automated visualization and results export\n`;
+            } else if (projectType === 'search') {
+                details += `Key Features:\n`;
+                details += `• Implementation of A*, BFS, DFS, UCS algorithms\n`;
+                details += `• Pac-Man game environment\n`;
+                details += `• Multiple maze layouts\n`;
+                details += `• Ghost agent implementations\n`;
+                details += `• Comprehensive testing framework\n`;
+            } else if (projectType === 'multiagent') {
+                details += `Key Features:\n`;
+                details += `• Intelligent ghost agents\n`;
+                details += `• Advanced evaluation functions\n`;
+                details += `• Contest-level performance optimization\n`;
+                details += `• Multi-agent coordination strategies\n`;
+            } else if (projectType === 'os') {
+                details += `Key Features:\n`;
+                details += `• Process management implementation\n`;
+                details += `• File system operations\n`;
+                details += `• Dining philosophers problem solution\n`;
+                details += `• System programming utilities\n`;
+            } else if (projectType === 'tracking') {
+                details += `Key Features:\n`;
+                details += `• Bayesian network implementation\n`;
+                details += `• Particle filtering algorithms\n`;
+                details += `• Exact inference methods\n`;
+                details += `• Probabilistic tracking systems\n`;
+            } else if (projectType === 'senior') {
+                details += `Key Features:\n`;
+                details += `• Comprehensive data analysis\n`;
+                details += `• Research methodology\n`;
+                details += `• Technical documentation\n`;
+                details += `• Presentation materials\n`;
+            }
+            
+            alert(details);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+
+        // Handle Enter key in password input
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html> 
